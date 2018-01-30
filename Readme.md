@@ -3,7 +3,7 @@
 ### Mongodb : https://mlab.com
 ### Postman : https://www.getpostman.com/
 
-##información:
+## información:
 
 ### Mongodb
   Crearemos nuestra base de datos y añadriemos un usuario (Se usara para el connect).
