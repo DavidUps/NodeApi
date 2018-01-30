@@ -13,5 +13,5 @@
   ![](https://github.com/DavidUps/NodeApi/blob/master/.img/Postman.gif)
 
 ### Comandos Node
-  npm install     => Para instalar el node.
-  node server.js  => Para ejecutar el servidor.
+  + npm install     => Para instalar el node.
+  + node server.js  => Para ejecutar el servidor.
