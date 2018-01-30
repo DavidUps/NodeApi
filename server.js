@@ -17,17 +17,17 @@ mongoose.connect('mongodb://dbAdmin:Unisys01@ds119018.mlab.com:19018/node_api', 
 mongoose.Promise = global.Promise;
 
 mongoose.connection.on('connected', function () {
-  console.log('Mongoose default connection open');
+  console.log('Mongoose connection open');
 });
 
 // If the connection throws an error
 mongoose.connection.on('error',function (err) {
-  console.log('Mongoose default connection error: ' + err);
+  console.log('Mongoose connection error: ' + err);
 });
 
 // When the connection is disconnected
 mongoose.connection.on('disconnected', function () {
-  console.log('Mongoose default connection disconnected');
+  console.log('Mongoose connection disconnected');
 });
 //configura app use bodyParser()
 //this will let us get the dat from POST
@@ -58,21 +58,71 @@ router.get('/', function(req,res){
 //on routers that en in /bears
 //------------------------------------------------------------------------------
 router.route('/bears')
+
+//Create a bear POST(http://localhost:8080/api/bears)
+
 .post(function(req, res) {
+  var bear = new Bear();          // create a new instance of the Bear model
+  bear.name= req.body.name;       // set the bears name (comes from the request)
 
-        var bear = new Bear();      // create a new instance of the Bear model
-        bear.name = req.body.name;  // set the bears name (comes from the request)
+  // save the bear and check for errors
+  bear.save(function(err){
+    if(err)
+      res.send(err);
+    res.json({ message: 'Bear created: ' + req.body.name});
+  });
+})
 
-        // save the bear and check for errors
-        bear.save(function(err) {
-          console.log(err);
-            if (err)
-                res.send(err);
+//get all bears GET(http://localhost:8080/api/bears)
 
-            res.json({ message: 'Bear created!' });
-        });
+.get(function(req, res) {
+  Bear.find(function(err, bears){
+    if (err)
+      res.send(err);
+    res.json(bears);
+  });
+});
 
+//En rutas que terminen en /bears/:bear_id
+//------------------------------------------------------------------------------
+router.route('/bears/:bear_id')
+
+//Coge el bear con la id que le pongas GET(http://localhost:8080/api/bears/:bear_id)
+.get(function(req, res){
+  Bear.findById(req.params.bear_id, function(err, bear){
+    if(err)
+      res.send(err);
+    res.json(bear);
+  });
+})
+
+// Actualiza el oso con el id PUT(http://localhost:8080/api/bears/:bear_id)
+.put(function(req, res){
+  //Usa tú modelo oso con ese id
+  Bear.findById(req.params.bear_id, function(err, bear) {
+    if(err)
+      res.send(err);
+
+    bear.name = req.body.name;           //Actualiza la información Bear
+
+    //Guardamos el bear
+    bear.save(function(err){
+      if(err)
+        res.send(err);
+      res.json({ message: 'Bear Updated'});
     });
+  });
+})
+
+.delete(function(req,res){
+  Bear.remove({
+    _id: req.params.bear_id
+  },function(err,bear){
+    if(err)
+      res.send(err);
+    res.json({ message: 'Bear Deleted'});
+  });
+});
 
 //REGISTER OUR RUTES------------------------------------------------------------
 //all of our routers will be prefixed with /api
